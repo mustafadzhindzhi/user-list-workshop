@@ -6,9 +6,11 @@ import UserListItem from "./UserListItem.jsx";
 import CreateUserModal from "./CreateUserModal.jsx";
 import UserInfoModal from "./UserInfoModal.jsx";
 import UserDeleteModal from "./UserDeleteModal.jsx";
+import Spinner from "./Spinner.jsx";
 
 const UserListTable = () => {
   const [users, setUsers] = useState([]);
+  const [isLoading, setIsloading] = useState(false);
   const [showCreate, setShowCreate] = useState(false); // и по-надолу казваме ако това е true покажи това, ако е фалсе нищо няма да показваш
   const [showInfo, setShowInfo] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -17,10 +19,14 @@ const UserListTable = () => {
   console.log(users);
 
   useEffect(() => {
+    setIsloading(true);
     userService
       .getAll()
       .then(setUsers)
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally( () => {
+       setTimeout(() =>  setIsloading(false), 300)
+      });
   }, []);
 
   const createUserClickHandler = () => {
@@ -93,6 +99,8 @@ const UserListTable = () => {
           onDelete={deleteUserHandler}
         />
       )}
+
+      {isLoading && <Spinner/>}
 
       <table className="table">
         <thead>
